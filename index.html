@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Bruno Salustiano — Dev Full Stack</title>
+    
+    <meta name="description" content="Desenvolvedor Full Stack especializado em JavaScript, Node.js e PostgreSQL. Localizado em Campinas, SP.">
+    <meta property="og:title" content="Bruno Salustiano — Portfolio">
+    <meta property="og:description" content="Confira meus projetos e soluções em desenvolvimento web.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💻%3C/text%3E%3C/svg%3E">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo">BFS<em>.dev</em></div>
+        <ul>
+            <li><a href="#about">Sobre</a></li>
+            <li><a href="#projects">Projetos</a></li>
+            <li><a href="#contact">Contato</a></li>
+        </ul>
+        <a class="nav-cta" href="#contact" aria-label="Contratar Bruno Salustiano">Hire me</a>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-tag">Desenvolvedor Full Stack · Campinas, SP</div>
+            <h1>Bruno<br><span class="line2">Salustiano</span></h1>
+            <p class="hero-sub">
+                Construo aplicações web completas — do banco de dados à interface.<br>
+                <strong>Node.js · JavaScript · PostgreSQL</strong>
+            </p>
+            <div class="hero-actions">
+                <a class="btn-main" href="#projects">Ver projetos</a>
+                <a class="btn-ghost" href="#contact">
+                    Vamos conversar
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="hero-scroll">Rolar</div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="about">
+        <div>
+            <div class="about-label">Sobre mim</div>
+            <h2>Desenvolvedor focado em aplicações reais</h2>
+            <p>Entrego aplicações <strong>fullstack funcionais</strong>, com backend robusto, banco de dados e interfaces pensadas para o usuário.</p>
+            <p>Sou movido pela vontade de resolver problemas concretos e evoluir em cada linha de código.</p>
+            <div class="about-stats">
+                <div class="stat"><div class="stat-num">2</div><div class="stat-label">Projetos entregues</div></div>
+                <div class="stat"><div class="stat-num">JS</div><div class="stat-label">Stack principal</div></div>
+                <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Vontade de aprender</div></div>
+                <div class="stat"><div class="stat-num">SP</div><div class="stat-label">Campinas, Brasil</div></div>
+            </div>
+        </div>
+        <div>
+            <div class="info-list">
+                <div class="info-item"><span class="info-key">Foco</span><span class="info-val">Full Stack JavaScript</span></div>
+                <div class="info-item"><span class="info-key">Backend</span><span class="info-val">Node.js · Express</span></div>
+                <div class="info-item"><span class="info-key">Banco de dados</span><span class="info-val">PostgreSQL · Supabase</span></div>
+                <div class="info-item"><span class="info-key">Status</span><span class="info-val" style="color:#6ee7b7">● Disponível p/ vagas</span></div>
+            </div>
+            <div class="skills-wrap" style="margin-top:1.5rem">
+                <span class="sk hi">JavaScript</span><span class="sk hi">Node.js</span><span class="sk hi">PostgreSQL</span>
+                <span class="sk">React</span><span class="sk">TypeScript</span><span class="sk">Git</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="proj-header">
+            <h2>Projetos</h2>
+            <div class="proj-count">Trabalhos em destaque</div>
+        </div>
+        <div class="proj-list">
+            <div class="proj-item">
+                <div class="proj-num">01</div>
+                <div class="proj-body">
+                    <h3>API Monitor Dashboard</h3>
+                    <p>Dashboard fullstack em tempo real para monitorar latência em APIs de IA. Autenticação JWT e persistência no Supabase.</p>
+                    <div class="proj-chips">
+                        <span class="chip">Node.js</span><span class="chip">PostgreSQL</span><span class="chip">JWT</span>
+                    </div>
+                </div>
+                <div class="proj-actions">
+                    <a class="proj-link-btn" href="https://monitorapi.onrender.com/index.html" target="_blank">Demo ↗</a>
+                    <a class="proj-link-btn" href="https://github.com/brunoferreirasalustiano/Meu-monitor-api" target="_blank">GitHub ↗</a>
+                </div>
+            </div>
+            <div class="proj-item">
+                <div class="proj-num">02</div>
+                <div class="proj-body">
+                    <h3>De Pietri — Loja de Sapatilhas</h3>
+                    <p>E-commerce completo com checkout via WhatsApp e painel administrativo de estoque.</p>
+                    <div class="proj-chips">
+                        <span class="chip">Node.js</span><span class="chip">Express</span><span class="chip">WhatsApp API</span>
+                    </div>
+                </div>
+                <div class="proj-actions">
+                    <a class="proj-link-btn" href="https://depietrisapatilhas.onrender.com/index.html" target="_blank">Demo ↗</a>
+                    <a class="proj-link-btn" href="https://github.com/brunoferreirasalustiano/sites-loja-sapatilha" target="_blank">GitHub ↗</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-top">
+            <div>
+                <h2>Vamostrabalharjuntos?</h2>
+                <div class="social-links">
+                    <a class="soc"
+                        href="https://wa.me/5519971374982?text=Olá%20Bruno,%20vi%20seu%20portfólio%20e%20gostaria%20de%20conversar!"
+                        target="_blank">
+                        WhatsApp ↗
+                    </a>
+                    <a class="soc" href="https://github.com/brunoferreirasalustiano" target="_blank">GitHub ↗</a>
+                    <a class="soc" href="https://www.linkedin.com/in/bfs-bruno/" target="_blank">LinkedIn ↗</a>
+                </div>
+            </div>
+            <form class="form-grid" id="contact-form">
+    <div class="form-left-col" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="field">
+            <label>NOME *</label>
+            <input name="nome" id="fn" type="text" required>
+        </div>
+        <div class="field">
+            <label>E-MAIL *</label>
+            <input name="email" id="fe" type="email" required>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>MENSAGEM *</label>
+        <textarea name="mensagem" id="fm" required></textarea>
+    </div>
+    <input type="text" name="_gotcha" style="display:none !important" tabindex="-1" autocomplete="off" />
+
+    <div class="form-submit" style="grid-column: 1 / -1;">
+        <button type="submit" class="submit-btn" id="sbtn">Enviar mensagem</button>
+        <div class="form-msg" id="fmsg"></div>
+    </div>
+</form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="foot-left">© 2026 <strong>Bruno Salustiano</strong> — Campinas, SP</div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
