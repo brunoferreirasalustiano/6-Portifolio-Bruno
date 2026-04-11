@@ -26,7 +26,7 @@ if (form) {
         
         try {
             // Apontando para o Node.js local
-            const response = await fetch('https://portifoliobrunosalustiano.onrender.com', {
+            const response = await fetch('https://portifoliobrunosalustiano.onrender.com/contact', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
