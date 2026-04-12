@@ -12,46 +12,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /// Envio para o seu Backend Próprio
+    // Envio p/ Backend Próprio
 if (form) {
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); 
-        
-        btn.disabled = true;
-        btn.textContent = 'Enviando...';
-        
-        // Transformando FormData em um Objeto JSON
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData);
-        
-        try {
-            // Apontando para o Node.js local
-            const response = await fetch('https://portifoliobrunosalustiano.onrender.com/contact', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json' 
-                },
-                body: JSON.stringify(payload) // O Node.js espera JSON
-            });
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
 
-            if (response.ok) {
-                msgArea.className = 'form-msg ok';
-                msgArea.textContent = 'Mensagem enviada pelo seu Backend! 🚀';
-                form.reset(); 
-            } else {
-                const errorData = await response.json();
-                msgArea.className = 'form-msg err';
-                msgArea.textContent = `Erro: ${errorData.message || 'Falha no servidor'}`;
-            }
-        } catch (error) {
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData);
+
+    // 🛡️ 4. TIMEOUT: Configurando o limite de 8 segundos
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8000ms = 8s
+
+    try {
+        const response = await fetch('https://portifoliobrunosalustiano.onrender.com/contact', {
+            method: 'POST',
+            signal: controller.signal, // Lincando o abort ao fetch
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        clearTimeout(timeoutId); // Limpa o cronômetro se der tudo certo
+
+        if (response.ok) {
+            msgArea.className = 'form-msg ok';
+            msgArea.textContent = 'Mensagem enviada com sucesso! 🚀';
+            form.reset();
+        } else {
+            const errorData = await response.json();
             msgArea.className = 'form-msg err';
-            msgArea.textContent = 'Erro de conexão com o servidor local.';
-            console.error('Erro no fetch:', error);
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Enviar mensagem';
+            // Mensagem se for pego pelo Rate Limit (Erro 429)
+            if (response.status === 429) {
+                 msgArea.textContent = 'Muitas tentativas. Tente novamente em alguns minutos.';
+            } else {
+                 msgArea.textContent = `Erro: ${errorData.message || 'Falha no servidor'}`;
+            }
         }
-    });
+    } catch (error) {
+        msgArea.className = 'form-msg err';
+        // Se o erro for porque o tempo esgotou
+        if (error.name === 'AbortError') {
+            msgArea.textContent = 'O servidor demorou muito para responder. Tente novamente.';
+        } else {
+            msgArea.textContent = 'Erro de conexão com o servidor.';
+        }
+        console.error('Erro no fetch:', error);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar mensagem';
+    }
+});
 }
 });
