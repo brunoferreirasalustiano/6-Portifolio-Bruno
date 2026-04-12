@@ -34,6 +34,13 @@ const contactSchema = z.object({
     _gotcha: z.string().optional()
 });
 
+app.get('/', (req, res) => {
+    res.status(200).json({ 
+        message: "API do Portfólio do Bruno está ON! 🚀",
+        status: "Running"
+    });
+});
+
 app.post('/contact', async (req, res) => {
     try {
         const { nome, email, mensagem, _gotcha } = contactSchema.parse(req.body);
