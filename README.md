@@ -37,6 +37,16 @@ Abaixo, um diagrama explicando o caminho que os dados percorrem desde o envio do
 * **Segurança (CORS):** Backend blindado para aceitar requisições `POST` apenas da origem autorizada (o domínio do GitHub Pages).
 
 ---
+## 🛡️ Segurança & Proteção de Dados (Nível de Produção)
+
+A API e o Frontend foram blindados com práticas rigorosas de segurança, visando resiliência contra ataques, bots e abusos:
+
+* **Rate Limiting & Trust Proxy:** Proteção ativa contra ataques de Spam e força bruta. A API utiliza `express-rate-limit` configurada para identificar IPs reais por trás do proxy reverso do Render, bloqueando acessos abusivos (ex: mais de 5 requisições em 15 minutos).
+* **CORS Rigoroso:** Configuração estrita de *Cross-Origin Resource Sharing*. O backend processa requisições `POST` e preflights `OPTIONS` exclusivamente do domínio oficial da aplicação e do ambiente local de desenvolvimento, rejeitando origens desconhecidas.
+* **Prevenção contra HTML Injection (XSS):** Todos os dados inseridos pelo usuário são sanitizados no backend. A API faz o *escape* de caracteres especiais (como `<` e `>`) antes do envio pelo Resend, mitigando injeções de scripts maliciosos no corpo do e-mail.
+* **Honeypot Anti-Bot:** Implementação de um campo oculto (`_gotcha`) no formulário. Se preenchido (comportamento típico de bots de varredura), a requisição é descartada silenciosamente pelo servidor, economizando processamento e cota de banco de dados.
+* **Row Level Security (RLS):** As tabelas no Supabase (PostgreSQL) possuem políticas de segurança ativadas no nível da linha. O client público (anônimo) possui apenas permissão restrita de inserção (`INSERT`), bloqueando qualquer tentativa de leitura, edição ou deleção de dados.
+* **Resiliência de UX (Timeout Handling):** O frontend utiliza `AbortController` na requisição HTTP. Caso o servidor sofra lentidão (ex: cold-start de instâncias em nuvem), a requisição é cancelada após 8 segundos, liberando a interface do usuário e exibindo um feedback claro de erro de conexão.
 
 ## 👨‍💻 Autor
 
