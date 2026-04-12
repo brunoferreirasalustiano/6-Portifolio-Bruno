@@ -17,8 +17,12 @@ const app = express();
 
 // 1. CORS RESTRITO: site pode chamar essa API
 app.use(cors({
-    origin: ['https://brunoferreirasalustiano.github.io'], // 👈 COLOQUE SEU DOMÍNIO AQUI
-    methods: ['POST'], // Só precisamos do POST para o form
+    origin: [
+        'https://brunoferreirasalustiano.github.io', // site oficial em Produção
+        'http://127.0.0.1:5500', // Seu Live Server (VS Code)
+        'http://localhost:5500'  // Alternativa local
+    ], 
+    methods: ['GET', 'POST', 'OPTIONS'], // POST para o form, GET e options
     allowedHeaders: ['Content-Type']
 }));
 
