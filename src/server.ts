@@ -100,14 +100,16 @@ app.post('/contact', async (req, res) => {
 // Código para manter o Render acordado (Self-Ping)
 const URL_DO_MEU_RENDER = "https://portifoliobrunosalustiano.onrender.com/";
 
-setInterval(() => {
-  fetch(URL_DO_MEU_RENDER)
-    .then(() => console.log("⚓ Ping enviado para manter o servidor acordado!"))
-    .catch((err) => console.error("❌ Erro no auto-ping:", err));
-}, 600000); // 10 minutos em milissegundos
-
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
     console.log(`--- BACKEND DO BRUNO RODANDO ---`);
     console.log(`Link local: http://localhost:${PORT}`);
+    
+    // Inicia o auto-ping assim que o servidor subir
+    setInterval(() => {
+        fetch(URL_DO_MEU_RENDER)
+            .then(() => console.log("⚓ Ping automático: Servidor mantido acordado!"))
+            .catch((err) => console.error("❌ Erro no auto-ping:", err));
+    }, 600000); // 10 minutos
 });
