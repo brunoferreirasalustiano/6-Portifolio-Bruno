@@ -439,23 +439,50 @@ footer {
     font-size: .85rem;
 }
 
-/* --- RESPONSIVIDADE (AJUSTADA) --- */
-@media (max-width: 768px) {
-    nav ul { display: none; }
-    
-    /* Empilha as colunas de contato no mobile */
-    .contact-top, .form-grid { 
-        grid-template-columns: 1fr; 
-        gap: 2rem; 
-    }
-    
-    /* No mobile, a mensagem volta a ter uma altura menor */
-    .field textarea {
-        min-height: 150px;
+/* --- RESPONSIVIDADE --- */
+
+/* TABLET (Até 1024px) */
+@media (max-width: 1024px) {
+    h1 { 
+        font-size: clamp(4rem, 10vw, 7rem); /* Título se ajusta dinamicamente */
+        margin-bottom: 2rem;
     }
 
-    #about { grid-template-columns: 1fr; gap: 3rem; }
-    .proj-item { grid-template-columns: 1fr; }
-    .proj-num { display: none; }
-    h1 { font-size: 3.5rem; }
+    /* Sobre: Empilha imagem e texto no tablet para dar espaço lateral */
+    #about { 
+        grid-template-columns: 1fr; 
+        text-align: center;
+        gap: 2rem;
+    }
+
+    /* Centraliza a foto no tablet */
+    .about-img {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    /* Contato: Ajusta proporção para não espremer o formulário */
+    .contact-top {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+}
+
+/* CELULAR (Até 768px) */
+@media (max-width: 768px) {
+    body { padding: 0 1rem; }
+
+    h1 { 
+        font-size: clamp(3rem, 15vw, 4.2rem); 
+        line-height: 0.95;
+    }
+
+    .contact-top, .form-grid, .proj-item { 
+        grid-template-columns: 1fr !important; 
+    }
+
+    /* Oculta menu e números para limpar o visual mobile */
+    nav ul, .proj-num { display: none; }
+
+    .field textarea { min-height: 150px; }
 }
