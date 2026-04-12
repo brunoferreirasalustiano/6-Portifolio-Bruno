@@ -14,6 +14,8 @@ const supabase = createClient(
 );
 
 const app = express();
+app.set('trust proxy', 1);
+
 
 // 1. CORS RESTRITO: site pode chamar essa API
 app.use(cors({
