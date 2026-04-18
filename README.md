@@ -24,7 +24,9 @@ Abaixo, um diagrama explicando o caminho que os dados percorrem desde o envio do
 ### Explicação do Fluxo (Log de Eventos):
 
 * **🌐 GitHub Pages (Frontend):** Recebe a interação do usuário. É hospedado globalmente via CDN, garantindo que o site carregue instantaneamente em qualquer lugar do mundo, sem latência.
-* **⚙️ Render (Backend API):** É o cérebro da operação. Recebe os dados, valida rigorosamente o schema com a biblioteca **Zod**, orquestra o envio de e-mails transacionais (via **Resend API**) e gerencia a conexão com o banco de dados.
+
+* **⚙️ ailway (Backend API): É o cérebro da operação. Diferente de hospedagens convencionais, a Railway oferece alta performance sem "cold start" (tempo de espera para o servidor acordar). Gerencia a validação rigorosa de dados com Zod, orquestra e-mails via Resend API e comunica-se com a camada de persistência.
+
 * **🗄️ Supabase (PostgreSQL):** É a camada de persistência. Funciona de forma independente do servidor de API, garantindo que os dados de contato sejam guardados com segurança e integridade em um banco de dados relacional.
 
 ---
