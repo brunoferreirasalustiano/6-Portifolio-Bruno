@@ -27,7 +27,7 @@ if (form) {
     const timeoutId = setTimeout(() => controller.abort(), 8000); // 8000ms = 8s
 
     try {
-        const response = await fetch('https://portifoliobrunosalustiano.onrender.com/contact', {
+        const response = await fetch('https://6-portifolio-bruno-production.up.railway.app/contact', {
             method: 'POST',
             signal: controller.signal, // Lincando o abort ao fetch
             headers: {
