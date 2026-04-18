@@ -107,11 +107,10 @@ app.post('/contact', contactLimiter, async (req, res) => {
     }
 });
 
-// Auto-Ping Redundante - estou usando o cron tambem 
-const URL_DO_MEU_RENDER = "https://portifoliobrunosalustiano.onrender.com/";
-setInterval(() => fetch(URL_DO_MEU_RENDER).catch(() => {}), 600000); 
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`--- BACKEND DO BRUNO RODANDO NA PORTA ${PORT} ---`);
+
+const PORT = Number(process.env.PORT) || 3001;
+app.listen(PORT,'0.0.0.0', () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
+export default app;
