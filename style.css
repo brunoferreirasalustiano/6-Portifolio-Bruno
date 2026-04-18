@@ -18,6 +18,11 @@ html {
     scroll-behavior: smooth;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 body {
     background: var(--black);
     color: var(--white);
@@ -95,7 +100,7 @@ nav a:hover {
 
 /* --- HERO SECTION --- */
 #hero {
-    min-height: 50vh; /* Reduzi de 100 para 80 para aproximar o conteúdo de baixo */
+    min-height: 50vh;
     padding: 0 6%;
     display: flex;
     flex-direction: column;
@@ -182,25 +187,6 @@ h1 .line2 {
     transition: color .2s;
 }
 
-.hero-scroll {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 6%;
-    font-size: .7rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--gray);
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-}
-
-.hero-scroll::after {
-    content: '';
-    width: 48px;
-    height: 1px;
-    background: var(--gray);
-}
 
 .divider {
     height: 1px;
@@ -444,7 +430,7 @@ footer {
 /* TABLET (Até 1024px) */
 @media (max-width: 1024px) {
     h1 { 
-        font-size: clamp(4rem, 10vw, 7rem); /* Título se ajusta dinamicamente */
+        font-size: clamp(4rem, 10vw, 7rem); 
         margin-bottom: 2rem;
     }
 
@@ -455,34 +441,69 @@ footer {
         gap: 2rem;
     }
 
-    /* Centraliza a foto no tablet */
     .about-img {
         max-width: 300px;
         margin: 0 auto;
     }
 
-    /* Contato: Ajusta proporção para não espremer o formulário */
     .contact-top {
         grid-template-columns: 1fr;
         gap: 3rem;
+    }
+
+    /* PROJETOS - TABLET: Quebra de 3 colunas para 1 coluna vertical */
+    .proj-item {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 1.5rem;
+    }
+
+    .proj-num {
+        display: none; /* Esconde o número gigante para liberar espaço útil */
+    }
+
+    .proj-actions {
+        display: flex;
+        justify-content: flex-start; /* Alinha os botões à esquerda embaixo do texto */
+        gap: 1rem;
     }
 }
 
 /* CELULAR (Até 768px) */
 @media (max-width: 768px) {
-    body { padding: 0 1rem; }
 
     h1 { 
         font-size: clamp(3rem, 15vw, 4.2rem); 
         line-height: 0.95;
     }
 
-    .contact-top, .form-grid, .proj-item { 
-        grid-template-columns: 1fr !important; 
+    /* Removido o .proj-item daqui para não forçar o texto pro centro */
+    .contact-top, .form-grid { 
+        grid-template-columns: 1fr !important;
+        text-align: center;
     }
 
-    /* Oculta menu e números para limpar o visual mobile */
-    nav ul, .proj-num { display: none; }
+    .about-stats {
+        grid-template-columns: 1fr;
+    }
+
+    /* PROJETOS - CELULAR: Mantém alinhado à esquerda e reduz margens */
+    .proj-item {
+        padding: 1.5rem 1rem; 
+        text-align: left; 
+        justify-items: start; 
+    }
+
+    .proj-actions {
+        flex-wrap: wrap; /* Permite que os botões quebrem de linha em telas muito estreitas */
+    }
+
+    #hero, #about, #projects, #contact {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    nav ul { display: none; }
 
     .field textarea { min-height: 150px; }
 }
