@@ -77,7 +77,7 @@ function escapeHtml(str: string) {
 }
 
 // Rota Serverless para a Vercel
-app.post('*', contactLimiter, async (req, res) => {
+app.post('/api/contact', contactLimiter, async (req, res) => {
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }

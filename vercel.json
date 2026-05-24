@@ -7,9 +7,15 @@
     }
   ],
   "routes": [
-  {
-    "src": "/api/(.*)",
-    "dest": "api/contact.ts"
-  }
-]
+    {
+      "src": "/api/(.*)",
+      "headers": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "https://brunoferreirasalustiano.github.io",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Accept"
+      },
+      "dest": "api/contact.ts?route=$1"
+    }
+  ]
 }
