@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 import cors from 'cors';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit'; 
-import mongoose from 'mongoose'; // 💾 Substituído: @supabase/supabase-js por mongoose
+import mongoose from 'mongoose'; // Substituído: @supabase/supabase-js por mongoose
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 // ==========================================
-// 💾 CONFIGURAÇÃO E CONEXÃO DO BANCO DE DADOS
+// CONFIGURAÇÃO E CONEXÃO DO BANCO DE DADOS
 // ==========================================
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -38,29 +38,46 @@ const ContactSchema = new mongoose.Schema({
 const ContactModel = mongoose.model('Contato', ContactSchema);
 
 // ==========================================
-// 🛡️ MIDDLEWARES DE SEGURANÇA E PERFORMANCE
+// MIDDLEWARES DE SEGURANÇA E PERFORMANCE
 // ==========================================
 
-// 1. CORS RESTRITO: Apenas origens controladas acessam a API
+
+// 1. CONFIGURAÇÃO AMPLIADA DO CORS (Boa prática para sustentação futura)
+const allowedOrigins = [
+    'https://brunoferreirasalustiano.github.io',
+    'http://127.0.0.1:5500',
+    'http://localhost:5500'
+];
+
 app.use(cors({
-    origin: [
-        'https://brunoferreirasalustiano.github.io', // Produção
-        'http://127.0.0.1:5500',                    // Live Server Local
-        'http://localhost:5500'                     // Alternativa Local
-    ], 
-    methods: ['GET', 'POST', 'OPTIONS'], 
-    allowedHeaders: ['Content-Type']
+    origin: function (origin, callback) {
+        // Permite requisições sem origem (como aplicativos mobile ou ferramentas de teste como Postman)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.warn(` Tentativa de acesso bloqueada por CORS para a origem: ${origin}`);
+            callback(new Error('Não permitido pela política de CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept'],
+    credentials: true,
+    optionsSuccessStatus: 200 // Responde requisições prévias (preflight) com status 200 antigo
 }));
 
 app.use(express.json());
 
-// 2. RATE LIMITING: Proteção contra ataques de negação de serviço e spam de e-mails
+// 2. RATE LIMITING: Ajustado para ignorar requisições OPTIONS (Preflight)
 const contactLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // Janela de 15 minutos
-    max: 5,                   // Limite de 5 requisições por IP
+    windowMs: 15 * 60 * 1000, 
+    max: 5, 
     message: { message: "Muitas requisições vindas deste IP. Tente novamente após 15 minutos." },
     standardHeaders: true,
     legacyHeaders: false,
+    // BOA PRÁTICA: Não contabiliza requisições OPTIONS no limite de tentativas do usuário
+    skip: (req) => req.method === 'OPTIONS', 
 });
 
 // Inicialização do serviço de e-mail (Resend)
