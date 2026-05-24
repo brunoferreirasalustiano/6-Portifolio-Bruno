@@ -3,45 +3,70 @@ import express from 'express';
 import { Resend } from 'resend';
 import cors from 'cors';
 import { z } from 'zod';
-import { createClient } from '@supabase/supabase-js';
-import rateLimit from 'express-rate-limit'; // 👈 IMPORTANDO O RATE LIMIT
+import rateLimit from 'express-rate-limit'; 
+import mongoose from 'mongoose'; // 💾 Substituído: @supabase/supabase-js por mongoose
 
 dotenv.config();
-
-const supabase = createClient(
-    process.env.SUPABASE_URL!, 
-    process.env.SUPABASE_KEY!
-);
 
 const app = express();
 app.set('trust proxy', 1);
 
+// ==========================================
+// 💾 CONFIGURAÇÃO E CONEXÃO DO BANCO DE DADOS
+// ==========================================
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// 1. CORS RESTRITO: site pode chamar essa API
+if (!MONGODB_URI) {
+    console.error("❌ Erro Crítico: MONGODB_URI não foi definida nas variáveis de ambiente!");
+    process.exit(1);
+}
+
+// Conexão persistente com o MongoDB Atlas
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log("💾 Conectado ao MongoDB Atlas com sucesso!"))
+    .catch((err) => console.error("❌ Erro fatal ao conectar ao MongoDB:", err));
+
+// Definição do Schema (Sustentação: Garante a estrutura do documento no banco)
+const ContactSchema = new mongoose.Schema({
+    nome: { type: String, required: true },
+    email: { type: String, required: true },
+    mensagem: { type: String, required: true },
+    dataEnvio: { type: Date, default: Date.now }
+});
+
+// Criação do Modelo para manipulação dos dados
+const ContactModel = mongoose.model('Contato', ContactSchema);
+
+// ==========================================
+// 🛡️ MIDDLEWARES DE SEGURANÇA E PERFORMANCE
+// ==========================================
+
+// 1. CORS RESTRITO: Apenas origens controladas acessam a API
 app.use(cors({
     origin: [
-        'https://brunoferreirasalustiano.github.io', // site oficial em Produção
-        'http://127.0.0.1:5500', // Seu Live Server (VS Code)
-        'http://localhost:5500'  // Alternativa local
+        'https://brunoferreirasalustiano.github.io', // Produção
+        'http://127.0.0.1:5500',                    // Live Server Local
+        'http://localhost:5500'                     // Alternativa Local
     ], 
-    methods: ['GET', 'POST', 'OPTIONS'], // POST para o form, GET e options
+    methods: ['GET', 'POST', 'OPTIONS'], 
     allowedHeaders: ['Content-Type']
 }));
 
 app.use(express.json());
 
-// 2. RATE LIMITING: Máximo de 5 envios a cada 15 minutos por IP proteção contra spam
+// 2. RATE LIMITING: Proteção contra ataques de negação de serviço e spam de e-mails
 const contactLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 5, // Bloqueia após 5 requisições
-    message: { message: "Muitas requisições. Tente novamente mais tarde." },
+    windowMs: 15 * 60 * 1000, // Janela de 15 minutos
+    max: 5,                   // Limite de 5 requisições por IP
+    message: { message: "Muitas requisições vindas deste IP. Tente novamente após 15 minutos." },
     standardHeaders: true,
     legacyHeaders: false,
 });
 
-// Inicializa o Resend
+// Inicialização do serviço de e-mail (Resend)
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Schema de validação de dados de entrada com Zod
 const contactSchema = z.object({
     nome: z.string().min(3, "Nome muito curto"),
     email: z.string().email("E-mail inválido"),
@@ -49,7 +74,7 @@ const contactSchema = z.object({
     _gotcha: z.string().optional()
 });
 
-//3. SANITIZAÇÃO: Função para kill qualquer HTML injetado (Proteção contra XSS, mesmo que o Resend já escape, é bom garantir)
+// 3. SANITIZAÇÃO: Prevenção contra injeção de scripts maliciosos (XSS)
 function escapeHtml(str: string) {
     return str
       .replace(/&/g, "&amp;")
@@ -59,26 +84,31 @@ function escapeHtml(str: string) {
       .replace(/'/g, "&#039;");
 }
 
+// ==========================================
+// 🚀 ROTAS DA API
+// ==========================================
+
 app.get('/', (req, res) => {
     res.status(200).json({ message: "API ON! 🚀", status: "Running" });
 });
 
-// Aplicando o limiter SÓ na rota de contato para evitar bloqueios desnecessários em outras rotas (se existirem)
 app.post('/contact', contactLimiter, async (req, res) => {
     try {
+        // Validação estrita do payload recebido do frontend
         const { nome, email, mensagem, _gotcha } = contactSchema.parse(req.body);
 
+        // Honeypot: Se o campo oculto estiver preenchido, descarta silenciosamente (é um Bot)
         if (_gotcha) {
-            console.log("🚩 BOT DETECTADO E BLOQUEADO!");
-            return res.status(200).json({ message: "Mensagem processada (sqn)" });
+            console.log("🚩 BOT DETECTADO E BLOQUEADO PELO HONEYPOT!");
+            return res.status(200).json({ message: "Mensagem processada com sucesso." });
         }
 
-        console.log(`📩 NOVO CONTATO: ${nome} <${email}>`);
+        console.log(`📩 Iniciando fluxo de contato para: ${nome} <${email}>`);
 
-        // Enviando o e-mail com os dados SANITIZADOS 
+        // STEP 1: Disparo do e-mail transacional via Resend
         const { data: emailData, error: emailError } = await resend.emails.send({
             from: 'onboarding@resend.dev',
-            to: 'brunoferreirasalustiano@gmail.com', // meu email real
+            to: 'brunoferreirasalustiano@gmail.com', 
             subject: '🚀 Novo contato do Portfólio!',
             html: `
                 <p><strong>Nome:</strong> ${escapeHtml(nome)}</p>
@@ -87,30 +117,46 @@ app.post('/contact', contactLimiter, async (req, res) => {
             `
         });
 
-        if (emailError) throw new Error("Falha no Resend");
+        if (emailError) {
+            console.error("❌ Erro disparado pelo Resend API:", emailError);
+            throw new Error(`Falha no Resend: ${emailError.message || 'Erro desconhecido'}`);
+        }
 
-        // Salvando no Banco de Dados
-        const { error: dbError } = await supabase
-            .from('contatos')
-            .insert([{ nome, email, mensagem }]);
-
-        if (dbError) console.error("❌ Erro no Supabase:", dbError.message);
+        // STEP 2: Persistência física dos dados no MongoDB Atlas
+        try {
+            await ContactModel.create({ nome, email, mensagem });
+            console.log("💾 Registro inserido no MongoDB Atlas com sucesso!");
+        } catch (dbError: any) {
+            console.error("❌ Erro de persistência no MongoDB:", dbError.message);
+            // Lança o erro para interromper o fluxo e evitar falso sucesso no frontend
+            throw new Error(`Falha de gravação no banco: ${dbError.message}`);
+        }
         
+        // Resposta de sucesso definitiva para o cliente
         return res.status(201).json({ message: "Mensagem recebida e salva com sucesso! 🚀" });
 
     } catch (error: any) {
+        // Tratamento específico para erros de validação de formulário (Zod)
         if (error instanceof z.ZodError) {
-            return res.status(400).json({ message: "Dados inválidos", details: error.flatten().fieldErrors });
+            return res.status(400).json({ 
+                message: "Dados inválidos", 
+                details: error.flatten().fieldErrors 
+            });
         }
-        console.error("❌ Erro inesperado:", error);
-        return res.status(500).json({ message: "Erro interno no servidor." });
+        
+        // Log centralizado para erros de infraestrutura capturados pelo throw (Resend / MongoDB)
+        console.error("❌ Erro interceptado no fluxo de execução:", error.message || error);
+        
+        return res.status(500).json({ 
+            message: "Erro interno no servidor ao processar sua mensagem." 
+        });
     }
 });
 
-
-
+// Inicialização do processo do Express
 const PORT = Number(process.env.PORT) || 3001;
-app.listen(PORT,'0.0.0.0', () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor rodando e escutando na porta ${PORT}`);
 });
+
 export default app;
