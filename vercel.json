@@ -8,6 +8,11 @@
   ],
   "routes": [
     {
+      "src": "/contact",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "dist/server.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "dist/server.js"
     }

@@ -176,4 +176,16 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor rodando e escutando na porta ${PORT}`);
 });
 
+// ==========================================
+// INICIALIZAÇÃO DO SERVIDOR
+// ==========================================
+
+// Só levanta o app.listen se NÃO estiver rodando no ambiente de produção da Vercel
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = Number(process.env.PORT) || 3001;
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Servidor local rodando na porta ${PORT}`);
+    });
+}
+
 export default app;
