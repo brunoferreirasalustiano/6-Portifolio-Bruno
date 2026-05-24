@@ -7,9 +7,9 @@
     }
   ],
   "routes": [
-    {
-      "src": "/api/contact",
-      "dest": "api/contact.ts"
-    }
-  ]
+  {
+    "src": "/api/(.*)",
+    "dest": "api/contact.ts"
+  }
+]
 }
